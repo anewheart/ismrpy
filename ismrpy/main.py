@@ -16,9 +16,20 @@ def read_ismr(filename='', lat='', lon='', columns=None,addition=True, Ipp=350, 
     if type(columns)!=type(None):
         ismr_column=columns
     
-    
-    data = pd.read_csv(filename, names=ismr_column, parse_dates=[['GPS_Week_Number', 'GPS_Time_Week']],
-                       date_parser=__weeksecondstoutc, skiprows=skiprows,dtype=dtype)
+    ismr_column = ['GPS_Week_Number','GPS_Time_Week','SVID','Value','Azimuth','Elevation', 'Sig1','Total_S4_Sig1',
+                   'Correction_total_S4_Sig1','Phi01_Sig1_1','Phi03_Sig1_3','Phi10_Sig1_10','Phi30_Sig1_30',
+                   'Phi60_Sig1_60','AvgCCD_Sig1_average_code-carrier_divergence','SigmaCCD_Sig1_standard_deviation_code-carrier_divergence',''
+                   'TEC_TOW-45s','dTEC_TOW-60s_TOW-45s','TEC_TOW-30s','dTEC_TOW-45s_TOW-30s','TEC_TOW-15s','dTEC_TOW-30s_TOW-15s',
+                   'TEC_TOW','dTEC_TOW-15s_TOW','Sig1_lock_time','sbf2ismr_version_number','Lock_time_second_frequency_TEC',
+                   'Averaged_C/N0_second_frequency_TEC_computation','SI_Index_Sig1','SI_Index_Sig1_numerator','p_Sig1_spectral_slope',
+                   'Average_Sig2_C/N0','Total_S4_Sig2','Correction_total_S4_Sig2','Phi01_Sig2_1','Phi03_Sig2_3','Phi10_Sig2_10','Phi30_Sig2_30',
+                   'Phi60_Sig2_60','AvgCCD_Sig2_average_code-carrier_divergence','SigmaCCD_Sig2_standard','Sig2_lock','SI_Index_Sig2',
+                   'SI_Index_Sig2_numerator','p_Sig2_phase','Average_Sig3_C/N0_last_minute','Total_S4_Sig3','Correction_total_S4_Sig3',
+                   'Phi01_Sig3_1_phase','Phi03_Sig3_3_phase','Phi10_Sig3_10_phase','Phi30_Sig3_30_phase','Phi60_Sig3_60_phase',
+                   'AvgCCD_Sig3_average_code-carrier_divergence','SigmaCCD_Sig3_standard_deviation_code-carrier_divergence','Sig3_lock_time',
+                   'SI_Index_Sig3','SI_Index_Sig3_numerator','p_Sig3_phase','T_Sig1_phase','T_Sig2_phase','T_Sig3_phase']
+    data = pd.read_csv(filename, names=ismr_column, skiprows=skiprows,dtype=dtype)
+    data['GPS_Week_Number_GPS_Time_Week']=[__weeksecondstoutc(data['GPS_Week_Number'].iloc[k],data['GPS_Time_Week'].iloc[k]) for k in range(len(data['GPS_Week_Number']))]
     data = data.rename(columns={'GPS_Week_Number_GPS_Time_Week': 'Time'})
     data = data.set_index(['Time'])
     data['sv'] = data.SVID.apply(__navigation)
@@ -107,65 +118,4 @@ def __navigation(x):
     return sv
 
 
-ismr_column = ['GPS_Week_Number',
-               'GPS_Time_Week',
-               'SVID',
-               'Value',
-               'Azimuth',
-               'Elevation',
-               'Sig1',
-               'Total_S4_Sig1',
-               'Correction_total_S4_Sig1',
-               'Phi01_Sig1_1',
-               'Phi03_Sig1_3',
-               'Phi10_Sig1_10',
-               'Phi30_Sig1_30',
-               'Phi60_Sig1_60',
-               'AvgCCD_Sig1_average_code-carrier_divergence',
-               'SigmaCCD_Sig1_standard_deviation_code-carrier_divergence',
-               'TEC_TOW-45s',
-               'dTEC_TOW-60s_TOW-45s',
-               'TEC_TOW-30s',
-               'dTEC_TOW-45s_TOW-30s',
-               'TEC_TOW-15s',
-               'dTEC_TOW-30s_TOW-15s',
-               'TEC_TOW',
-               'dTEC_TOW-15s_TOW',
-               'Sig1_lock_time',
-               'sbf2ismr_version_number',
-               'Lock_time_second_frequency_TEC',
-               'Averaged_C/N0_second_frequency_TEC_computation',
-               'SI_Index_Sig1',
-               'SI_Index_Sig1_numerator',
-               'p_Sig1_spectral_slope',
-               'Average_Sig2_C/N0',
-               'Total_S4_Sig2',
-               'Correction_total_S4_Sig2',
-               'Phi01_Sig2_1',
-               'Phi03_Sig2_3',
-               'Phi10_Sig2_10',
-               'Phi30_Sig2_30',
-               'Phi60_Sig2_60',
-               'AvgCCD_Sig2_average_code-carrier_divergence',
-               'SigmaCCD_Sig2_standard',
-               'Sig2_lock',
-               'SI_Index_Sig2',
-               'SI_Index_Sig2_numerator',
-               'p_Sig2_phase',
-               'Average_Sig3_C/N0_last_minute',
-               'Total_S4_Sig3',
-               'Correction_total_S4_Sig3',
-               'Phi01_Sig3_1_phase',
-               'Phi03_Sig3_3_phase',
-               'Phi10_Sig3_10_phase',
-               'Phi30_Sig3_30_phase',
-               'Phi60_Sig3_60_phase',
-               'AvgCCD_Sig3_average_code-carrier_divergence',
-               'SigmaCCD_Sig3_standard_deviation_code-carrier_divergence',
-               'Sig3_lock_time',
-               'SI_Index_Sig3',
-               'SI_Index_Sig3_numerator',
-               'p_Sig3_phase',
-               'T_Sig1_phase',
-               'T_Sig2_phase',
-               'T_Sig3_phase']
+
